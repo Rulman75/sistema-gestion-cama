@@ -5,6 +5,12 @@ export default async function SolicitudesPage() {
   const solicitudes = await prisma.solicitud.findMany({
     orderBy: { createdAt: 'desc' }
   })
+  
+  const units = await prisma.unit.findMany({ orderBy: { name: 'asc' } })
+  const beds = await prisma.bed.findMany({ 
+    include: { unit: true },
+    orderBy: [{ unit: { name: 'asc' } }, { numCama: 'asc' }] 
+  })
 
   return (
     <div className="p-4 bg-gray-100 min-h-screen">
@@ -13,7 +19,7 @@ export default async function SolicitudesPage() {
         <p className="text-gray-500 text-sm">Registro de Solicitudes Áreas Procedimiento RCA-UCMA y Unidades Críticas</p>
       </div>
 
-      <SolicitudesClient initialData={solicitudes} />
+      <SolicitudesClient initialData={solicitudes} units={units} beds={beds} />
     </div>
   )
 }

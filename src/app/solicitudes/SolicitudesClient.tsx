@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { createSolicitud, updateSolicitud } from './actions'
 import { Plus, Check, Save } from 'lucide-react'
 
-export default function SolicitudesClient({ initialData }: { initialData: any[] }) {
+export default function SolicitudesClient({ initialData, units, beds }: { initialData: any[], units: any[], beds: any[] }) {
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -22,9 +22,7 @@ export default function SolicitudesClient({ initialData }: { initialData: any[] 
   }
 
   async function handleAssign(id: number, val: string) {
-    if (val.trim()) {
-      await updateSolicitud(id, val)
-    }
+    await updateSolicitud(id, val)
   }
 
   const renderTable = (title: string, data: any[], type: string) => (
@@ -55,13 +53,18 @@ export default function SolicitudesClient({ initialData }: { initialData: any[] 
                 <td className="px-4 py-3 text-gray-600">{req.diagnostico}</td>
                 <td className="px-4 py-3 text-gray-600">{req.requerimiento}</td>
                 <td className="px-4 py-3">
-                  <input 
-                    type="text" 
-                    className="border border-gray-300 rounded px-2 py-1 w-24 text-sm focus:ring-1 focus:ring-blue-500 outline-none"
+                  <select
+                    className="border border-gray-300 rounded px-2 py-1 w-32 text-sm focus:ring-1 focus:ring-blue-500 outline-none"
                     defaultValue={req.camaAsignada || ''}
-                    onBlur={(e) => handleAssign(req.id, e.target.value)}
-                    placeholder="Ej: 748A"
-                  />
+                    onChange={(e) => handleAssign(req.id, e.target.value)}
+                  >
+                    <option value="">-- Asignar --</option>
+                    {beds.map((b: any) => (
+                      <option key={b.id} value={b.numCama || b.id}>
+                        {b.unit.name} - {b.numCama || b.id}
+                      </option>
+                    ))}
+                  </select>
                 </td>
                 <td className="px-4 py-3 text-center">
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${req.estado === 'ASIGNADA' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
@@ -97,7 +100,12 @@ export default function SolicitudesClient({ initialData }: { initialData: any[] 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Unidad Origen</label>
-                  <input required name="unidadOrigen" type="text" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2" placeholder="Ej: UE" />
+                  <select required name="unidadOrigen" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2">
+                    <option value="">Seleccione...</option>
+                    {units.map((u: any) => (
+                      <option key={u.id} value={u.name}>{u.name}</option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Requerimiento</label>
@@ -113,8 +121,15 @@ export default function SolicitudesClient({ initialData }: { initialData: any[] 
                 <input required name="diagnostico" type="text" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Cama Asignada (Opcional por ahora)</label>
-                <input name="camaAsignada" type="text" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2" placeholder="Ej: 501-3" />
+                <label className="block text-sm font-medium text-gray-700">Cama Asignada (Opcional)</label>
+                <select name="camaAsignada" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2">
+                  <option value="">-- Sin asignar --</option>
+                  {beds.map((b: any) => (
+                    <option key={b.id} value={b.numCama || b.id}>
+                      {b.unit.name} - Cama {b.numCama || b.id}
+                    </option>
+                  ))}
+                </select>
               </div>
               
               <div className="flex justify-end space-x-3 mt-6">
