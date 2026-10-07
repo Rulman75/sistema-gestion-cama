@@ -12,6 +12,8 @@ export default function Sidebar({ user }: { user: User | null }) {
   const pathname = usePathname()
   const [isMantenedoresOpen, setIsMantenedoresOpen] = useState(pathname.startsWith('/admin'))
 
+  const [isMobileOpen, setIsMobileOpen] = useState(false)
+
   if (pathname === '/login') return null
 
   const navigation = [
@@ -31,86 +33,106 @@ export default function Sidebar({ user }: { user: User | null }) {
     { name: 'Usuarios', href: '/admin/users', icon: Users },
   ]
 
+  const sidebarClasses = `fixed inset-y-0 left-0 z-50 w-64 bg-[#004A98] text-white shadow-xl transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 flex flex-col ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`
+
   return (
-    <div className="flex h-full w-64 flex-col bg-[#004A98] text-white shadow-xl">
-      <div className="flex flex-col items-center justify-center p-6 bg-white border-b border-gray-200">
-        <Image src="/HRA.jpg" alt="Logo HRA" width={150} height={80} className="object-contain" />
-      </div>
-      
-      <div className="flex-1 overflow-y-auto py-4">
-        <nav className="space-y-1 px-3">
-          {navigation.map((item) => {
-            const isActive = pathname === item.href
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`flex items-center px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
-                  isActive ? 'bg-[#003875] text-white' : 'text-blue-100 hover:bg-[#003875] hover:text-white'
-                }`}
-              >
-                <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
-                {item.name}
-              </Link>
-            )
-          })}
-
-          <div className="pt-4">
-            <button
-              onClick={() => setIsMantenedoresOpen(!isMantenedoresOpen)}
-              className="flex w-full items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md text-blue-100 hover:bg-[#003875] hover:text-white transition-colors"
-            >
-              <div className="flex items-center">
-                <Building className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
-                Mantenedores
-              </div>
-              {isMantenedoresOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-            </button>
-            
-            {isMantenedoresOpen && (
-              <div className="mt-1 space-y-1 pl-10 pr-3 border-l-2 border-[#003875] ml-4">
-                {mantenedores.map((item) => {
-                  const isActive = pathname === item.href
-                  return (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                        isActive ? 'bg-[#003875] text-white' : 'text-blue-200 hover:bg-[#003875] hover:text-white'
-                      }`}
-                    >
-                      <item.icon className="mr-3 h-4 w-4 flex-shrink-0" aria-hidden="true" />
-                      {item.name}
-                    </Link>
-                  )
-                })}
-              </div>
-            )}
-          </div>
-        </nav>
+    <>
+      {/* Mobile Hamburger Header */}
+      <div className="md:hidden bg-[#004A98] text-white p-4 flex items-center justify-between fixed top-0 w-full z-40 shadow-md">
+        <Image src="/HRA.jpg" alt="Logo HRA" width={80} height={40} className="object-contain bg-white p-1 rounded" />
+        <button onClick={() => setIsMobileOpen(!isMobileOpen)} className="p-2 focus:outline-none">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+        </button>
       </div>
 
-      {user && (
-        <div className="p-4 bg-[#003875]">
-          <div className="flex items-center mb-4 px-2">
-            <div className="flex-shrink-0">
-              <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm">
-                {user.name.charAt(0).toUpperCase()}
-              </div>
-            </div>
-            <div className="ml-3 min-w-0">
-              <p className="text-sm font-medium text-white truncate">{user.name}</p>
-              <p className="text-xs text-blue-200 truncate">{user.email}</p>
-            </div>
-          </div>
-          <form action="/api/logout" method="POST">
-            <button type="submit" className="flex w-full items-center px-3 py-2 text-sm font-medium text-red-300 hover:text-red-100 rounded-md hover:bg-red-900/30 transition-colors">
-              <LogOut className="mr-3 h-5 w-5" />
-              Cerrar Sesión
-            </button>
-          </form>
-        </div>
+      {/* Mobile Overlay */}
+      {isMobileOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden" onClick={() => setIsMobileOpen(false)}></div>
       )}
-    </div>
+
+      {/* Sidebar */}
+      <div className={sidebarClasses}>
+        <div className="flex flex-col items-center justify-center p-6 bg-white border-b border-gray-200 hidden md:flex">
+          <Image src="/HRA.jpg" alt="Logo HRA" width={150} height={80} className="object-contain" />
+        </div>
+        
+        <div className="flex-1 overflow-y-auto py-4 mt-16 md:mt-0">
+          <nav className="space-y-1 px-3">
+            {navigation.map((item) => {
+              const isActive = pathname === item.href
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => setIsMobileOpen(false)}
+                  className={`flex items-center px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
+                    isActive ? 'bg-[#003875] text-white' : 'text-blue-100 hover:bg-[#003875] hover:text-white'
+                  }`}
+                >
+                  <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                  {item.name}
+                </Link>
+              )
+            })}
+
+            <div className="pt-4">
+              <button
+                onClick={() => setIsMantenedoresOpen(!isMantenedoresOpen)}
+                className="flex w-full items-center justify-between px-3 py-2.5 text-sm font-medium rounded-md text-blue-100 hover:bg-[#003875] hover:text-white transition-colors"
+              >
+                <div className="flex items-center">
+                  <Building className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                  Mantenedores
+                </div>
+                {isMantenedoresOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+              </button>
+              
+              {isMantenedoresOpen && (
+                <div className="mt-1 space-y-1 pl-10 pr-3 border-l-2 border-[#003875] ml-4">
+                  {mantenedores.map((item) => {
+                    const isActive = pathname === item.href
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        onClick={() => setIsMobileOpen(false)}
+                        className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                          isActive ? 'bg-[#003875] text-white' : 'text-blue-200 hover:bg-[#003875] hover:text-white'
+                        }`}
+                      >
+                        <item.icon className="mr-3 h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                        {item.name}
+                      </Link>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          </nav>
+        </div>
+
+        {user && (
+          <div className="p-4 bg-[#003875] pb-safe">
+            <div className="flex items-center mb-4 px-2">
+              <div className="flex-shrink-0">
+                <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm">
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+              </div>
+              <div className="ml-3 min-w-0">
+                <p className="text-sm font-medium text-white truncate">{user.name}</p>
+                <p className="text-xs text-blue-200 truncate">{user.email}</p>
+              </div>
+            </div>
+            <form action="/api/logout" method="POST">
+              <button type="submit" className="flex w-full items-center px-3 py-2 text-sm font-medium text-red-300 hover:text-red-100 rounded-md hover:bg-red-900/30 transition-colors">
+                <LogOut className="mr-3 h-5 w-5" />
+                Cerrar Sesión
+              </button>
+            </form>
+          </div>
+        )}
+      </div>
+    </>
   )
 }

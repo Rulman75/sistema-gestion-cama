@@ -31,7 +31,7 @@ export default async function RootLayout({
     <html lang="es" className="h-full bg-gray-50">
       <body className={`${inter.className} h-full flex`}>
         <Sidebar user={user} />
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto pt-20 md:pt-0">
           {children}
         </main>
       </body>
