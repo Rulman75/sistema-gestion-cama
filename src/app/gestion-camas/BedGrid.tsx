@@ -131,5 +131,6 @@ export default function BedGrid({ initialData }: { initialData: Record<string, R
         </div>
       )}
     </div>
+    </div>
   )
 }
