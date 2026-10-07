@@ -14,7 +14,19 @@ export default async function DashboardPage() {
   const occupiedBeds = units.reduce((acc, u) => acc + u.beds.filter(b => b.status === 'OCCUPIED').length, 0)
   const maintenanceBeds = units.reduce((acc, u) => acc + u.beds.filter(b => b.status === 'MAINTENANCE').length, 0)
   const blockedBeds = units.reduce((acc, u) => acc + u.beds.filter(b => b.status === 'BLOCKED').length, 0)
-  const waitingPatients = units.reduce((acc, u) => acc + u.waitlist.filter(w => w.status === 'WAITING').length, 0)
+
+  // Fetch Espera UE from the latest MinsalReport
+  const latestMinsalReport = await prisma.minsalReport.findFirst({
+    orderBy: { date: 'desc' }
+  })
+  
+  let waitingPatients = 0
+  if (latestMinsalReport && latestMinsalReport.demandaUE) {
+    try {
+      const demanda = JSON.parse(latestMinsalReport.demandaUE)
+      waitingPatients = Object.values(demanda).reduce((acc: number, val: any) => acc + (Number(val.count) || 0), 0)
+    } catch (e) {}
+  }
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
