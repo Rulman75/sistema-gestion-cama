@@ -38,8 +38,8 @@ export default async function UnitsPage() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">{unit._count.beds}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">{unit._count.waitlist}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <a href="#" className="text-blue-600 hover:text-blue-900">Editar</a>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-end items-center">
+                  <UnitForm unit={{ id: unit.id, name: unit.name, type: unit.type }} />
                   <DeleteUnitButton id={unit.id} />
                 </td>
               </tr>

@@ -36,3 +36,20 @@ export async function deleteUnit(id: number) {
   revalidatePath('/')
   return { success: true }
 }
+export async function updateUnit(id: number, formData: FormData) {
+  const name = formData.get('name') as string
+  const type = formData.get('type') as string
+
+  if (!name || !type) {
+    return { error: 'Nombre y tipo son obligatorios' }
+  }
+
+  await prisma.unit.update({
+    where: { id },
+    data: { name, type }
+  })
+
+  revalidatePath('/admin/units')
+  revalidatePath('/')
+  return { success: true }
+}
