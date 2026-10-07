@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { createUnit, deleteUnit, updateUnit } from './actions'
 import { Edit2, Plus, Trash2 } from 'lucide-react'
 
-export function UnitForm({ unit, areas }: { unit?: { id: number, name: string, type: string, areaId: number | null }, areas: any[] }) {
+export function UnitForm({ unit, areas, sectors }: { unit?: { id: number, name: string, type: string, areaId: number | null, sectorId: number | null }, areas: any[], sectors: any[] }) {
   const [isOpen, setIsOpen] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -73,6 +73,16 @@ export function UnitForm({ unit, areas }: { unit?: { id: number, name: string, t
                   <option value="">-- Sin Área asignada --</option>
                   {areas.map(a => (
                     <option key={a.id} value={a.id}>{a.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Sector</label>
+                <select name="sectorId" defaultValue={unit?.sectorId || ""} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2">
+                  <option value="">-- Sin Sector asignado --</option>
+                  {sectors.map(s => (
+                    <option key={s.id} value={s.id}>{s.name}</option>
                   ))}
                 </select>
               </div>

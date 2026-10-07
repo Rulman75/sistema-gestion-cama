@@ -22,6 +22,8 @@ model Unit {
   type      String     // CRITICAL, BASIC
   areaId    Int?       // Nullable for existing data
   area      Area?      @relation(fields: [areaId], references: [id])
+  sectorId  Int?
+  sector    Sector?    @relation(fields: [sectorId], references: [id])
   beds      Bed[]
   waitlist  Waitlist[]
 }
@@ -63,6 +65,7 @@ model Sector {
   id        Int      @id @default(autoincrement())
   name      String   @unique
   beds      Bed[]
+  units     Unit[]
 }
 
 model TipoCama {
