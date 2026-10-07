@@ -65,6 +65,27 @@ export default function ReporteForm({ initialAvailability, allUnits }: { initial
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
+              {['SALA PREHOSPITALIZACION', 'RED', 'PACIENTES CRR', 'PACIENTES POLI', 'TRASLADOS MACRORED'].map(customOrigin => (
+                <tr key={customOrigin} className="hover:bg-red-50 bg-red-50/30">
+                  <td className="py-2 font-bold text-red-700">{customOrigin}</td>
+                  <td className="py-2 px-2">
+                    <input 
+                      type="number" 
+                      min="0"
+                      className="w-full text-center border border-red-300 rounded-md py-1 bg-white"
+                      onChange={e => handleDemandChange(customOrigin, e.target.value)}
+                    />
+                  </td>
+                  <td className="py-2">
+                    <input 
+                      type="text" 
+                      className="w-full border border-red-300 rounded-md py-1 px-2 text-xs bg-white"
+                      placeholder="Opcional..."
+                      onChange={e => handleNoteChange(customOrigin, e.target.value)}
+                    />
+                  </td>
+                </tr>
+              ))}
               {allUnits.map(unit => (
                 <tr key={unit.id} className="hover:bg-gray-50">
                   <td className="py-2 font-medium text-gray-700">{unit.name}</td>
