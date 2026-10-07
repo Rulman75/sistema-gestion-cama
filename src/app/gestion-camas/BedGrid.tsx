@@ -15,6 +15,7 @@ export default function BedGrid({ initialData }: { initialData: Record<string, R
       case 'AVAILABLE': return 'bg-green-500 text-white border-green-600 shadow-green-200'
       case 'OCCUPIED': return 'bg-red-500 text-white border-red-600 shadow-red-200'
       case 'MAINTENANCE': return 'bg-yellow-400 text-yellow-900 border-yellow-500 shadow-yellow-100'
+      case 'BLOCKED': return 'bg-gray-500 text-white border-gray-600 shadow-gray-200'
       default: return 'bg-gray-200 text-gray-700 border-gray-300'
     }
   }
@@ -72,7 +73,7 @@ export default function BedGrid({ initialData }: { initialData: Record<string, R
           if (i < col.beds.length) {
             const bed = col.beds[i]
             const bedName = bed.numCama || bed.id
-            const statusLabel = bed.status === 'AVAILABLE' ? 'Libre' : bed.status === 'OCCUPIED' ? 'Ocup' : 'Mant'
+            const statusLabel = bed.status === 'AVAILABLE' ? 'Libre' : bed.status === 'OCCUPIED' ? 'Ocup' : bed.status === 'MAINTENANCE' ? 'Mant' : bed.status === 'BLOCKED' ? 'Bloq' : 'Otro'
             // We put Bed Name in one cell, Status in the next
             row.push(bedName, statusLabel)
           } else {
@@ -183,7 +184,7 @@ function BedModal({ bed, onClose, onUpdate }: { bed: Bed, onClose: () => void, o
         <div className="space-y-4">
           <div>
             <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Cambiar Estado</label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               <button 
                 onClick={() => setStatus('AVAILABLE')}
                 className={`py-2 rounded font-medium text-xs border transition-colors ${status === 'AVAILABLE' ? 'bg-green-500 text-white border-green-600' : 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'}`}>
@@ -198,6 +199,11 @@ function BedModal({ bed, onClose, onUpdate }: { bed: Bed, onClose: () => void, o
                 onClick={() => setStatus('MAINTENANCE')}
                 className={`py-2 rounded font-medium text-xs border transition-colors ${status === 'MAINTENANCE' ? 'bg-yellow-400 text-yellow-900 border-yellow-500' : 'bg-yellow-50 text-yellow-800 border-yellow-200 hover:bg-yellow-100'}`}>
                 Mantención
+              </button>
+              <button 
+                onClick={() => setStatus('BLOCKED')}
+                className={`py-2 rounded font-medium text-xs border transition-colors ${status === 'BLOCKED' ? 'bg-gray-500 text-white border-gray-600' : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'}`}>
+                Bloqueada
               </button>
             </div>
           </div>
