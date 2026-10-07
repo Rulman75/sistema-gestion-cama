@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   // ADMIN, USER
+  createdAt DateTime @default(now())
+}
+
+model Unit {
+  id        Int        @id @default(autoincrement())
+  name      String
+  type      String     // CRITICAL, BASIC
+  areaId    Int?       // Nullable for existing data
+  area      Area?      @relation(fields: [areaId], references: [id])
+  beds      Bed[]
+  waitlist  Waitlist[]
+}
+
+model Bed {
+  id         Int       @id @default(autoincrement())
+  unitId     Int
+  unit       Unit      @relation(fields: [unitId], references: [id])
+  
+  sectorId   Int?
+  sector     Sector?   @relation(fields: [sectorId], references: [id])
+
+  tipoCamaId Int?
+  tipoCama   TipoCama? @relation(fields: [tipoCamaId], references: [id])
+
+  numCama    String?
+
+  status     String    // AVAILABLE, OCCUPIED, MAINTENANCE
+  gender     String?   // H, M, I
+  notes      String?
+}
+
+model Waitlist {
+  id        Int      @id @default(autoincrement())
+  unitId    Int
+  unit      Unit     @relation(fields: [unitId], references: [id])
+  status    String   // WAITING, ASSIGNED, CANCELLED
+  notes     String?
+  createdAt DateTime @default(now())
+}
+
+model Area {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  units     Unit[]
+}
+
+model Sector {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  beds      Bed[]
+}
+
+model TipoCama {
+  id          Int      @id @default(autoincrement())
+  descripcion String   @unique
+  beds        Bed[]
+}
+
+model MinsalReport {
+  id             Int      @id @default(autoincrement())
+  date           DateTime @default(now())
+  shift          String
+  demandaUE      String
+  disponibilidad String
+  notes          String?
+}
+
+model Solicitud {
+  id               Int      @id @default(autoincrement())
+  createdAt        DateTime @default(now())
+  tipoSolicitud    String   // 'RCA_UCMA' or 'CRITICA'
+  unidadOrigen     String
+  nombrePaciente   String
+  diagnostico      String
+  requerimiento    String
+  camaAsignada     String?
+  estado           String   @default("PENDIENTE") // PENDIENTE, ASIGNADA, RECHAZADA
+}
