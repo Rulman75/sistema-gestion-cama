@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { createUnit, deleteUnit, updateUnit } from './actions'
 import { Edit2, Plus, Trash2 } from 'lucide-react'
 
-export function UnitForm({ unit }: { unit?: { id: number, name: string, type: string } }) {
+export function UnitForm({ unit, areas }: { unit?: { id: number, name: string, type: string, areaId: number | null }, areas: any[] }) {
   const [isOpen, setIsOpen] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -59,11 +59,21 @@ export function UnitForm({ unit }: { unit?: { id: number, name: string, type: st
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700">Tipo</label>
+                <label className="block text-sm font-medium text-gray-700">Tipo de Unidad</label>
                 <select required name="type" defaultValue={unit?.type || "OTHER"} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2">
                   <option value="CRITICAL">Unidad Crítica</option>
                   <option value="BASIC">Unidad Básica</option>
                   <option value="OTHER">Otra</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Área (Piso)</label>
+                <select name="areaId" defaultValue={unit?.areaId || ""} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2">
+                  <option value="">-- Sin Área asignada --</option>
+                  {areas.map(a => (
+                    <option key={a.id} value={a.id}>{a.name}</option>
+                  ))}
                 </select>
               </div>
 

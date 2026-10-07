@@ -4,6 +4,7 @@ import { UnitForm, DeleteUnitButton } from './UnitForm'
 export default async function UnitsPage() {
   const units = await prisma.unit.findMany({
     include: {
+      area: true,
       _count: {
         select: { beds: true, waitlist: true }
       }
@@ -11,11 +12,13 @@ export default async function UnitsPage() {
     orderBy: { name: 'asc' }
   })
 
+  const areas = await prisma.area.findMany({ orderBy: { name: 'asc' } })
+
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Mantenedor de Unidades (Sectores)</h1>
-        <UnitForm />
+        <UnitForm areas={areas} />
       </div>
 
       <div className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
@@ -23,6 +26,7 @@ export default async function UnitsPage() {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Área</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
               <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Total Camas</th>
               <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Total Espera</th>
@@ -33,13 +37,14 @@ export default async function UnitsPage() {
             {units.map((unit) => (
               <tr key={unit.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{unit.name}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{unit.area?.name || '-'}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {unit.type === 'CRITICAL' ? 'Crítica' : unit.type === 'BASIC' ? 'Básica' : 'Otra'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">{unit._count.beds}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">{unit._count.waitlist}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-end items-center">
-                  <UnitForm unit={{ id: unit.id, name: unit.name, type: unit.type }} />
+                  <UnitForm unit={{ id: unit.id, name: unit.name, type: unit.type, areaId: unit.areaId }} areas={areas} />
                   <DeleteUnitButton id={unit.id} />
                 </td>
               </tr>

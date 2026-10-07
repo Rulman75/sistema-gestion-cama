@@ -6,13 +6,14 @@ import { revalidatePath } from 'next/cache'
 export async function createUnit(formData: FormData) {
   const name = formData.get('name') as string
   const type = formData.get('type') as string
+  const areaId = formData.get('areaId') ? Number(formData.get('areaId')) : null
 
   if (!name || !type) {
     return { error: 'Nombre y tipo son obligatorios' }
   }
 
   await prisma.unit.create({
-    data: { name, type }
+    data: { name, type, areaId }
   })
 
   revalidatePath('/admin/units')
@@ -39,6 +40,7 @@ export async function deleteUnit(id: number) {
 export async function updateUnit(id: number, formData: FormData) {
   const name = formData.get('name') as string
   const type = formData.get('type') as string
+  const areaId = formData.get('areaId') ? Number(formData.get('areaId')) : null
 
   if (!name || !type) {
     return { error: 'Nombre y tipo son obligatorios' }
@@ -46,7 +48,7 @@ export async function updateUnit(id: number, formData: FormData) {
 
   await prisma.unit.update({
     where: { id },
-    data: { name, type }
+    data: { name, type, areaId }
   })
 
   revalidatePath('/admin/units')
