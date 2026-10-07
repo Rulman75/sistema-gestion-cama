@@ -19,8 +19,44 @@ export default function BedGrid({ initialData }: { initialData: Record<string, R
     }
   }
 
+  function handleExportExcel() {
+    import('xlsx').then(XLSX => {
+      const exportData: any[] = []
+      
+      areas.forEach(area => {
+        const sectors = Object.keys(initialData[area]).sort()
+        sectors.forEach(sector => {
+          const units = Object.keys(initialData[area][sector]).sort()
+          units.forEach(unit => {
+            const beds = initialData[area][sector][unit]
+            beds.forEach((bed: any) => {
+              exportData.push({
+                'Piso / Área': area,
+                'Sector': sector,
+                'Unidad': unit,
+                'Cama': bed.numCama || bed.id,
+                'Estado': bed.status === 'AVAILABLE' ? 'Disponible' : bed.status === 'OCCUPIED' ? 'Ocupada' : 'Mantenimiento'
+              })
+            })
+          })
+        })
+      })
+
+      const worksheet = XLSX.utils.json_to_sheet(exportData)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Estado Camas")
+      XLSX.writeFile(workbook, "Gestion_Camas.xlsx")
+    })
+  }
+
   return (
-    <div className="space-y-8">
+    <div>
+      <div className="flex justify-end mb-4">
+        <button onClick={handleExportExcel} className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow">
+          Exportar a Excel
+        </button>
+      </div>
+      <div className="space-y-8">
       {areas.map(area => (
         <div key={area} className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
           {/* Encabezado del Área (Piso) */}
