@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Bed as BedIcon } from 'lucide-react'
 
 type Bed = any // Using any for simplicity in this mockup, we can type it fully later
 
@@ -120,16 +121,13 @@ export default function BedGrid({ initialData }: { initialData: Record<string, R
                           <button
                             key={bed.id}
                             onClick={() => setSelectedBed(bed)}
-                            className={`w-12 h-12 flex flex-col items-center justify-center rounded-md border-b-2 shadow-sm text-xs font-bold transition-transform hover:scale-110 ${getStatusColor(bed.status)}`}
+                            className={`w-12 h-12 flex flex-col items-center justify-center rounded-md border-b-2 shadow-sm text-xs font-bold transition-transform hover:scale-110 p-1 ${getStatusColor(bed.status)}`}
                             title={`${unit} - Cama ${bed.numCama || bed.id}${bed.notes ? `\nObservación: ${bed.notes}` : ''}`}
                           >
-                            <span className="truncate w-full text-center px-1">
+                            <BedIcon className="w-6 h-6 stroke-[2.2] shrink-0" />
+                            <span className="text-[10px] leading-tight truncate w-full text-center">
                               {bed.numCama ? bed.numCama : bed.id}
                             </span>
-                            {/* Here we could show patient initials if occupied */}
-                            {bed.status === 'OCCUPIED' && (
-                              <span className="text-[9px] opacity-80 font-normal truncate w-full text-center">Ocup</span>
-                            )}
                           </button>
                         ))}
                       </div>
